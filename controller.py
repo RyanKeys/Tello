@@ -8,7 +8,7 @@ import time
 # Speed of the drone
 S = 60
 # Frames per second of the pygame window display
-FPS = 60
+FPS = 60000
 
 
 class FrontEnd(object):
@@ -25,14 +25,12 @@ class FrontEnd(object):
     def __init__(self):
         # Init pygame
         pygame.init()
-
         # Create pygame window
         pygame.display.set_caption("Tello video stream")
         self.screen = pygame.display.set_mode([960, 720])
 
         # Init Tello object that interacts with the Tello drone
         self.tello = Tello()
-
         # Drone velocities between -100~100
         self.for_back_velocity = 0
         self.left_right_velocity = 0
@@ -68,7 +66,6 @@ class FrontEnd(object):
 
         should_stop = False
         while not should_stop:
-
             for event in pygame.event.get():
                 if event.type == USEREVENT + 1:
                     self.update()
@@ -91,6 +88,9 @@ class FrontEnd(object):
             face_cascade = cv2.CascadeClassifier(
                 'haarcascade_frontalface_default.xml')
 
+            fourcc = cv2.VideoWriter_fourcc(* 'XVID')
+            out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+
             self.screen.fill([0, 0, 0])
             frame = cv2.cvtColor(frame_read.frame, cv2.COLOR_BGR2RGB)
             gray = cv2.cvtColor(frame_read.frame, cv2.COLOR_BGR2GRAY)
@@ -100,10 +100,11 @@ class FrontEnd(object):
                               (x+w, y+h), (255, 0, 0), 2)
                 roi_gray = gray[y:y+h, x:x+w]
                 roi_color = frame[y:y + h, x:x + w]
+                out.write(frame.faces)
                 eyes = eye_cascade.detectMultiScale(roi_gray)
                 for (ex, ey, ew, eh) in eyes:
                     cv2.rectangle(roi_color, (ex, ey),
-                                  (ex+ew, ey+eh), (0, 255, 0), 2)
+                                  (ex + ew, ey + eh), (0, 255, 0), 2)
             frame = np.rot90(frame)
             frame = np.flipud(frame)
             frame = pygame.surfarray.make_surface(frame)
@@ -141,7 +142,7 @@ class FrontEnd(object):
         Arguments:
             key: pygame key
         """
-        if key == pygame.K_UP or key == pygame.K_DOWN:  # set zero forward/backward velocity
+        if key == pygame.K_UP or key == pygame.K_DOWN:  # set zero forward/backward veloc ity
             self.for_back_velocity = 0
         elif key == pygame.K_LEFT or key == pygame.K_RIGHT:  # set zero left/right velocity
             self.left_right_velocity = 0
