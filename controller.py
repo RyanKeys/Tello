@@ -8,7 +8,7 @@ import time
 # Speed of the drone
 S = 60
 # Frames per second of the pygame window display
-FPS = 60000
+FPS = 60
 
 
 class FrontEnd(object):
@@ -26,7 +26,7 @@ class FrontEnd(object):
         # Init pygame
         pygame.init()
         # Create pygame window
-        pygame.display.set_caption("Tello video stream")
+        pygame.display.set_caption("Tello Video Stream")
         self.screen = pygame.display.set_mode([960, 720])
 
         # Init Tello object that interacts with the Tello drone
@@ -88,8 +88,9 @@ class FrontEnd(object):
             face_cascade = cv2.CascadeClassifier(
                 'haarcascade_frontalface_default.xml')
 
-            fourcc = cv2.VideoWriter_fourcc(* 'XVID')
-            out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+# Test Video Encoder
+            #fourcc = cv2.VideoWriter_fourcc(* 'XVID')
+            #out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
             self.screen.fill([0, 0, 0])
             frame = cv2.cvtColor(frame_read.frame, cv2.COLOR_BGR2RGB)
